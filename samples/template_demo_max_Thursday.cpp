@@ -6,7 +6,8 @@
 
 //#include "workaround.hpp"
 
-#include "image_processing.hpp"
+//#include "detection.hpp"
+#include "tracking.hpp"
 
 using namespace std;
 using namespace cv;
@@ -33,6 +34,7 @@ void addF(unsigned char* const data, const int width,
 
 int main(int argc, const char** argv) {
 	// Parse command line arguments.
+	VideoCapture cap("../../test/test_data/video/logo.mp4");
 	CommandLineParser parser(argc, argv, kOptions);
 	parser.about(kAbout);
 
@@ -43,9 +45,9 @@ int main(int argc, const char** argv) {
 	}
 
 	// Read image.
-	Mat src = imread(parser.get<string>(0), CV_LOAD_IMAGE_COLOR);
+	Mat frame = imread(parser.get<string>(0), CV_LOAD_IMAGE_COLOR);
 	
-	if (src.empty()) {
+	if (frame.empty()) {
 		cout << "Failed to open image file '" + parser.get<string>(0) + "'."
 			<< endl;
 		return 0;
@@ -56,33 +58,57 @@ int main(int argc, const char** argv) {
 	const int kWaitKeyDelay = 1;
 	namedWindow(kSrcWindowName, WINDOW_NORMAL);
 	resizeWindow(kSrcWindowName, 640, 480);
-	imshow(kSrcWindowName, src);
-	waitKey(kWaitKeyDelay);
-
-	Rect roi(100,100,300,300);
+	//imshow(kSrcWindowName, src);
+	//waitKey(kWaitKeyDelay);
 	
 	
 	// Threshold data.
-	ImageProcessorMax processor;
-	const int threshold = parser.get<int>("t");
-	try {
+	//CascadeDetector CD;
+	std::vector<Rect> faces ;
+	std::vector<double> scores;
+	//std::shared_ptr<Detector> CreateDetector("cascade");
+	
+
+	//const int threshold = parser.get<int>("t");
+	//try {
 		//cvtColor(src, src, CV_RGB2GRAY);
 		//cvtColor(src, src, CV_GRAY2RGB);
-		processor.CvtColor(src, roi);
+		//processor.CvtColor(src, roi);
+		//processor.Filter(src, roi, 20); 
+		//processor.DetectEdges(src, roi,	3,  10, 2,3 );
 
-	}
-	catch (const std::exception& ex) {
-		cout << ex.what() << endl;
-		return 0;
-	}
+	//CD.Init("../../test/test_data/detection/cascades/opencv_logo_cascade.xml");
+
+
+	//______________________________________________________________________________________
+	MedianFlowTracker;
+	std::shared_ptr<Tracker> medFlRr= MedianFlowTracker::CreateTracker("median_flow");
+	medFlRr->CreateTracker("jonny");
+
+	const string kDstWindowName = "Destination image";
+	for (;;)
+	{
+		Mat frame;
+		cap >> frame;
+		//CD.Detect(frame, faces, scores);
+		for (int i = 0; i < faces.size(); i++)
+			//cv::rectangle(frame, faces[i], CV_RGB(255, 0, 0));
+
+
+		//}
+	//catch (const std::exception& ex) {
+	//	cout << ex.what() << endl;
+	//	return 0;
+	//}
 
 	// Show destination image.
-	const string kDstWindowName = "Destination image";
-	namedWindow(kDstWindowName, WINDOW_NORMAL);
-	resizeWindow(kDstWindowName, 640, 480);
-	
-	imshow(kDstWindowName,processor.tmp);
-	waitKey();
+		
+		kDstWindowName;
+		namedWindow(kDstWindowName, WINDOW_NORMAL);
+		resizeWindow(kDstWindowName, 640, 480);
 
+		imshow(kDstWindowName, frame);
+		waitKey(5);
+	}
 	return 0;
 }
