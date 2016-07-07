@@ -17,6 +17,8 @@ class Tracker {
 
 class MedianFlowTracker : public Tracker {
 public:
+	 
+
 	virtual bool Init(const cv::Mat &frame, const cv::Rect &roi);
 	virtual cv::Rect Track(const cv::Mat &frame);
 
